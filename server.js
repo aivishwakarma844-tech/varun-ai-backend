@@ -1,28 +1,21 @@
 const nodemailer = require('nodemailer');
 
-async function executeTask(task) {
-    if (task.taskName === 'send_email') {
-        let transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'aivishwakarma844@gmail.com', // your email
-                pass: process.env.EMAIL_APP_PASSWORD // app password
-            }
-        });
-
-        try {
-            let info = await transporter.sendMail({
-                from: '"VARUN AI" <aivishwakarma844@gmail.com>',
-                to: task.to,
-                subject: task.subject,
-                text: task.body
-            });
-            console.log('Email sent:', info.messageId);
-            return { success: true, message: 'Email sent', task };
-        } catch (err) {
-            console.error('Email failed:', err);
-            return { success: false, message: 'Email send failed', error: err.message };
-        }
+// Email task
+async function sendEmailTask(payload) {
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,          // your Gmail
+      pass: process.env.EMAIL_APP_PASSWORD   // Gmail App Password
     }
-    // other tasks...
+  });
+
+  let info = await transporter.sendMail({
+    from: `"VARUN AI" <${process.env.EMAIL_USER}>`,
+    to: payload.to,
+    subject: payload.subject,
+    text: payload.body
+  });
+
+  return { success: true, message: `Email sent: ${info.messageId}` };
 }
